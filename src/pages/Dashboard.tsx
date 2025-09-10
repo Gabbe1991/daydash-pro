@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRole } from '@/hooks/useRole';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { ScheduleCalendar } from '@/components/calendar/ScheduleCalendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +26,7 @@ import { format } from 'date-fns';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { getLegacyRole } = useRole();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [timeOffRequests, setTimeOffRequests] = useState<TimeOffRequest[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
@@ -36,9 +38,10 @@ export default function Dashboard() {
     const loadDashboardData = async () => {
       setIsLoading(true);
       try {
+        const legacyRole = getLegacyRole();
         const [schedulesData, requestsData, analyticsData, employeeAnalyticsData, employeesData] = await Promise.all([
-          mockAPI.getSchedules(user?.role === 'employee' ? user.id : undefined),
-          mockAPI.getTimeOffRequests(user?.role === 'employee' ? user.id : undefined),
+          mockAPI.getSchedules(legacyRole === 'employee' ? user.id : undefined),
+          mockAPI.getTimeOffRequests(legacyRole === 'employee' ? user.id : undefined),
           mockAPI.getAnalytics(),
           mockAPI.getEmployeeAnalytics(),
           mockAPI.getEmployees(),
@@ -341,18 +344,18 @@ export default function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Welcome back, {user.name}</h1>
           <p className="text-muted-foreground">
-            Here's what's happening with your {user.role === 'company' ? 'company' : user.role === 'manager' ? 'team' : 'schedule'} today.
+            Here's what's happening with your {getLegacyRole() === 'company' ? 'company' : getLegacyRole() === 'manager' ? 'team' : 'schedule'} today.
           </p>
         </div>
         <Button className="bg-gradient-primary hover:opacity-90">
           <Plus className="w-4 h-4 mr-2" />
-          {user.role === 'employee' ? 'Request Time Off' : 'Create Schedule'}
+          {getLegacyRole() === 'employee' ? 'Request Time Off' : 'Create Schedule'}
         </Button>
       </div>
 
-      {user.role === 'company' && renderCompanyDashboard()}
-      {user.role === 'manager' && renderManagerDashboard()}
-      {user.role === 'employee' && renderEmployeeDashboard()}
+      {getLegacyRole() === 'company' && renderCompanyDashboard()}
+      {getLegacyRole() === 'manager' && renderManagerDashboard()}
+      {getLegacyRole() === 'employee' && renderEmployeeDashboard()}
     </div>
   );
 }

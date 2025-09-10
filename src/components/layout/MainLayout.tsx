@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { useRole } from '@/hooks/useRole';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 
@@ -8,8 +9,11 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const { user } = useAuth();
+  const { getLegacyRole } = useRole();
 
   if (!user) return null;
+
+  const legacyRole = getLegacyRole();
 
   return (
     <SidebarProvider>
@@ -24,10 +28,10 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <SidebarTrigger />
                 <div className="flex items-center gap-2">
                   <h1 className="text-xl font-semibold text-foreground">
-                    {getPageTitle(user.role)}
+                    {getPageTitle(legacyRole || 'employee')}
                   </h1>
-                  <div className={`px-2 py-1 rounded-full text-xs font-medium bg-${user.role} text-${user.role}-foreground`}>
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)} View
+                  <div className={`px-2 py-1 rounded-full text-xs font-medium bg-${legacyRole} text-${legacyRole}-foreground`}>
+                    {legacyRole?.charAt(0).toUpperCase() + legacyRole?.slice(1)} View
                   </div>
                 </div>
               </div>

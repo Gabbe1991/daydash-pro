@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRole } from '@/hooks/useRole';
 import {
   Calendar,
   Users,
@@ -42,7 +43,8 @@ const navigationItems = {
   company: [
     { title: 'Dashboard', url: '/dashboard', icon: BarChart3 },
     { title: 'Company Settings', url: '/company', icon: Building2 },
-    { title: 'Managers', url: '/managers', icon: Shield },
+    { title: 'Role Management', url: '/roles', icon: Shield },
+    { title: 'Departments', url: '/departments', icon: Building2 },
     { title: 'All Employees', url: '/employees', icon: Users },
     { title: 'Analytics', url: '/analytics', icon: BarChart3 },
     { title: 'Settings', url: '/settings', icon: Settings },
@@ -67,18 +69,20 @@ const navigationItems = {
 export function AppSidebar() {
   const { state } = useSidebar();
   const { user, logout, switchRole } = useAuth();
+  const { getLegacyRole } = useRole();
   const location = useLocation();
 
   if (!user) return null;
 
   const currentPath = location.pathname;
-  const items = navigationItems[user.role];
+  const legacyRole = getLegacyRole();
+  const items = legacyRole ? navigationItems[legacyRole] : [];
   const isCollapsed = state === 'collapsed';
   
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path + '/');
   const getNavClass = (active: boolean) =>
     active 
-      ? `bg-${user.role} text-${user.role}-foreground font-medium shadow-sm` 
+      ? `bg-${legacyRole} text-${legacyRole}-foreground font-medium shadow-sm` 
       : 'hover:bg-muted/50 transition-smooth';
 
   const getRoleColor = (role: string) => {
@@ -96,7 +100,7 @@ export function AppSidebar() {
         {/* Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-${user.role}`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-${legacyRole}`}>
               <Calendar className="w-5 h-5 text-white" />
             </div>
             {!isCollapsed && (
@@ -117,7 +121,7 @@ export function AppSidebar() {
                 <div className="flex items-center gap-3 w-full">
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className={getRoleColor(user.role)}>
+                    <AvatarFallback className={getRoleColor(legacyRole || 'employee')}>
                       {user.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
@@ -127,8 +131,8 @@ export function AppSidebar() {
                         {user.name}
                       </p>
                       <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className={`text-xs ${getRoleColor(user.role)}`}>
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                        <Badge variant="secondary" className={`text-xs ${getRoleColor(legacyRole || 'employee')}`}>
+                          {legacyRole?.charAt(0).toUpperCase() + legacyRole?.slice(1) || 'Employee'}
                         </Badge>
                         <ChevronDown className="w-3 h-3 text-muted-foreground" />
                       </div>

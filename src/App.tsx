@@ -90,7 +90,12 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/managers" element={
+            <Route path="/roles" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/departments" element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>

@@ -1,16 +1,63 @@
-export type UserRole = 'company' | 'manager' | 'employee';
+// Permission types
+export type Permission = 
+  | 'can_approve_requests'
+  | 'can_assign_shifts'
+  | 'can_view_analytics'
+  | 'can_manage_roles'
+  | 'can_manage_departments'
+  | 'can_create_accounts'
+  | 'can_delete_accounts'
+  | 'can_view_company_analytics'
+  | 'can_edit_schedules'
+  | 'can_view_all_employees'
+  | 'can_manage_unavailability'
+  | 'can_swap_shifts'
+  | 'can_request_time_off';
 
+// Role types
+export interface Role {
+  id: string;
+  name: string;
+  displayName: string;
+  permissions: Permission[];
+  isDefault: boolean; // Default roles cannot be deleted
+  isSystemDefined: boolean; // System roles like Company Admin
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Department types
+export interface Department {  
+  id: string;
+  name: string;
+  description?: string;
+  companyId: string;
+  managerId?: string;
+  employeeCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Enhanced User interface
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
+  roleId: string; // Reference to Role
   companyId: string;
+  departmentId?: string;
   managerId?: string;
   avatar?: string;
   createdAt: string;
   isActive: boolean;
+  lastLogin?: string;
+  phoneNumber?: string;
+  jobTitle?: string;
 }
+
+// Legacy role type for backward compatibility
+export type UserRole = 'company' | 'manager' | 'employee';
 
 export interface Company {
   id: string;
@@ -18,6 +65,8 @@ export interface Company {
   logo?: string;
   createdAt: string;
   settings: CompanySettings;
+  adminUserId: string; // Company Admin user ID
+  subscriptionPlan: 'free' | 'pro' | 'enterprise';
 }
 
 export interface CompanySettings {
