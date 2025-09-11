@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Dashboard from "./pages/Dashboard";
+import CompanySettings from "./pages/CompanySettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,7 +68,7 @@ const App = () => (
             } />
             <Route path="/settings" element={
               <ProtectedRoute>
-                <Dashboard />
+                <CompanySettings />
               </ProtectedRoute>
             } />
             <Route path="/requests" element={
