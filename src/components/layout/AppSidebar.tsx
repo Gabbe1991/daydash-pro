@@ -41,24 +41,23 @@ import {
 
 const navigationItems = {
   company: [
-    { title: 'Dashboard', url: '/dashboard', icon: BarChart3 },
-    { title: 'Company Settings', url: '/company', icon: Building2 },
+    { title: 'Dashboard', url: '/', icon: BarChart3 },
+    { title: 'Analytics', url: '/analytics', icon: BarChart3 },
     { title: 'Role Management', url: '/roles', icon: Shield },
     { title: 'Departments', url: '/departments', icon: Building2 },
     { title: 'All Employees', url: '/employees', icon: Users },
-    { title: 'Analytics', url: '/analytics', icon: BarChart3 },
-    { title: 'Settings', url: '/settings', icon: Settings },
+    { title: 'Company Settings', url: '/settings', icon: Settings },
   ],
   manager: [
-    { title: 'Dashboard', url: '/dashboard', icon: BarChart3 },
-    { title: 'Schedule', url: '/schedule', icon: Calendar },
-    { title: 'My Team', url: '/team', icon: Users },
-    { title: 'Requests', url: '/requests', icon: Bell },
+    { title: 'Dashboard', url: '/', icon: BarChart3 },
     { title: 'Analytics', url: '/analytics', icon: BarChart3 },
+    { title: 'Departments', url: '/departments', icon: Building2 },
+    { title: 'All Employees', url: '/employees', icon: Users },
+    { title: 'Requests', url: '/requests', icon: Bell },
     { title: 'Settings', url: '/settings', icon: Settings },
   ],
   employee: [
-    { title: 'Dashboard', url: '/dashboard', icon: BarChart3 },
+    { title: 'Dashboard', url: '/', icon: BarChart3 },
     { title: 'My Schedule', url: '/schedule', icon: Calendar },
     { title: 'Time Off', url: '/time-off', icon: Clock },
     { title: 'Shift Swaps', url: '/swaps', icon: UserCheck },

@@ -1,5 +1,125 @@
-import { User, Schedule, TimeOffRequest, Analytics, EmployeeAnalytics, ShiftSwapRequest } from '@/types';
+import { User, Schedule, TimeOffRequest, Analytics, EmployeeAnalytics, ShiftSwapRequest, Department, Role } from '@/types';
 import { addDays, subDays, format, addHours } from 'date-fns';
+
+// Mock departments
+export const mockDepartments: Department[] = [
+  {
+    id: 'dept-1',
+    name: 'Sales',
+    description: 'Sales and customer relations',
+    companyId: 'comp-1',
+    managerId: '2',
+    employeeCount: 1,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'dept-2',
+    name: 'Customer Support',
+    description: 'Customer service and support',
+    companyId: 'comp-1',
+    managerId: '2',
+    employeeCount: 1,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'dept-3',
+    name: 'Marketing',
+    description: 'Marketing and advertising',
+    companyId: 'comp-1',
+    managerId: '2',
+    employeeCount: 1,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'dept-4',
+    name: 'Operations',
+    description: 'Daily operations and logistics',
+    companyId: 'comp-1',
+    managerId: '2',
+    employeeCount: 1,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+];
+
+// Mock roles
+export const mockRoles: Role[] = [
+  {
+    id: 'role-admin',
+    name: 'Company Admin',
+    displayName: 'Company Administrator',
+    permissions: [
+      'can_approve_requests',
+      'can_assign_shifts',
+      'can_view_analytics',
+      'can_manage_roles',
+      'can_manage_departments',
+      'can_create_accounts',
+      'can_delete_accounts',
+      'can_view_company_analytics',
+      'can_edit_schedules',
+      'can_view_all_employees',
+      'can_manage_unavailability'
+    ],
+    isDefault: true,
+    isSystemDefined: true,
+    companyId: 'comp-1',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'role-manager',
+    name: 'Manager',
+    displayName: 'Department Manager',
+    permissions: [
+      'can_approve_requests',
+      'can_assign_shifts',
+      'can_view_analytics',
+      'can_edit_schedules',
+      'can_view_all_employees',
+      'can_manage_unavailability'
+    ],
+    isDefault: true,
+    isSystemDefined: true,
+    companyId: 'comp-1',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'role-manager-assistant',
+    name: 'Manager Assistant',
+    displayName: 'Manager Assistant',
+    permissions: [
+      'can_assign_shifts',
+      'can_approve_requests',
+      'can_edit_schedules',
+      'can_manage_unavailability'
+    ],
+    isDefault: true,
+    isSystemDefined: true,
+    companyId: 'comp-1',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'role-employee',
+    name: 'Employee',
+    displayName: 'Employee',
+    permissions: [
+      'can_swap_shifts',
+      'can_request_time_off',
+      'can_manage_unavailability'
+    ],
+    isDefault: true,
+    isSystemDefined: true,
+    companyId: 'comp-1',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+];
 
 // Mock employees
 export const mockEmployees: User[] = [
@@ -9,9 +129,12 @@ export const mockEmployees: User[] = [
     email: 'emma.williams@company.com',
     roleId: 'role-employee',
     companyId: 'comp-1',
+    departmentId: 'dept-1',
     managerId: '2',
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
     createdAt: '2024-01-01T00:00:00Z',
+    hireDate: '2024-01-01T00:00:00Z',
+    phone: '+1 (555) 123-4567',
     isActive: true,
     jobTitle: 'Sales Associate',
   },
@@ -21,9 +144,12 @@ export const mockEmployees: User[] = [
     email: 'james.rodriguez@company.com',
     roleId: 'role-employee',
     companyId: 'comp-1',
+    departmentId: 'dept-2',
     managerId: '2',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
     createdAt: '2024-01-01T00:00:00Z',
+    hireDate: '2024-01-15T00:00:00Z',
+    phone: '+1 (555) 234-5678',
     isActive: true,
     jobTitle: 'Customer Support',
   },
@@ -33,9 +159,12 @@ export const mockEmployees: User[] = [
     email: 'sofia.chen@company.com',
     roleId: 'role-employee',
     companyId: 'comp-1',
+    departmentId: 'dept-3',
     managerId: '2',
     avatar: 'https://images.unsplash.com/photo-1494790108755-2616b96db0d5?w=100&h=100&fit=crop&crop=face',
     createdAt: '2024-01-01T00:00:00Z',
+    hireDate: '2024-02-01T00:00:00Z',
+    phone: '+1 (555) 345-6789',
     isActive: true,
     jobTitle: 'Marketing Assistant',
   },
@@ -45,9 +174,12 @@ export const mockEmployees: User[] = [
     email: 'david.thompson@company.com',
     roleId: 'role-employee',
     companyId: 'comp-1',
+    departmentId: 'dept-4',
     managerId: '2',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
     createdAt: '2024-01-01T00:00:00Z',
+    hireDate: '2024-03-01T00:00:00Z',
+    phone: '+1 (555) 456-7890',
     isActive: true,
     jobTitle: 'Operations Assistant',
   },
@@ -271,5 +403,15 @@ export const mockAPI = {
   getEmployeeAnalytics: async (): Promise<EmployeeAnalytics[]> => {
     await new Promise(resolve => setTimeout(resolve, 700));
     return mockEmployeeAnalytics;
+  },
+
+  getDepartments: async (): Promise<Department[]> => {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return mockDepartments;
+  },
+
+  getRoles: async (): Promise<Role[]> => {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return mockRoles;
   }
 };

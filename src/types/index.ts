@@ -53,7 +53,9 @@ export interface User {
   isActive: boolean;
   lastLogin?: string;
   phoneNumber?: string;
+  phone?: string;
   jobTitle?: string;
+  hireDate: string;
 }
 
 // Legacy role type for backward compatibility

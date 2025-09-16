@@ -63,6 +63,7 @@ const mockManagers: User[] = [
     companyId: 'comp-1',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
     createdAt: '2024-01-01T00:00:00Z',
+    hireDate: '2024-01-01T00:00:00Z',
     isActive: true,
     jobTitle: 'Operations Manager',
   },
@@ -74,6 +75,7 @@ const mockManagers: User[] = [
     companyId: 'comp-1',
     avatar: 'https://images.unsplash.com/photo-1494790108755-2616b96db0d5?w=100&h=100&fit=crop&crop=face',
     createdAt: '2024-01-01T00:00:00Z',
+    hireDate: '2024-01-01T00:00:00Z',
     isActive: true,
     jobTitle: 'Sales Manager',
   }

@@ -7,6 +7,8 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Dashboard from "./pages/Dashboard";
+import Analytics from "./pages/Analytics";
+import AllEmployees from "./pages/AllEmployees";
 import CompanySettings from "./pages/CompanySettings";
 import NotFound from "./pages/NotFound";
 
@@ -39,12 +41,12 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/dashboard" element={
+            <Route path="/" element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/" replace />} />
             {/* Role-specific routes can be added here */}
             <Route path="/schedule" element={
               <ProtectedRoute>
@@ -58,12 +60,12 @@ const App = () => (
             } />
             <Route path="/employees" element={
               <ProtectedRoute>
-                <Dashboard />
+                <AllEmployees />
               </ProtectedRoute>
             } />
             <Route path="/analytics" element={
               <ProtectedRoute>
-                <Dashboard />
+                <Analytics />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
