@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
 import AllEmployees from "./pages/AllEmployees";
 import CompanySettings from "./pages/CompanySettings";
+import Departments from "./pages/Departments";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -100,7 +101,7 @@ const App = () => (
             } />
             <Route path="/departments" element={
               <ProtectedRoute>
-                <Dashboard />
+                <Departments />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
