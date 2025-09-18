@@ -27,6 +27,7 @@ import {
 import { User, Department, Role, EmployeeAnalytics } from '@/types';
 import { mockAPI, mockEmployees, mockDepartments, mockRoles } from '@/lib/mockData';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AddEmployeeDialog } from '@/components/employees/AddEmployeeDialog';
 
 export default function AllEmployees() {
   const { user } = useAuth();
@@ -39,7 +40,7 @@ export default function AllEmployees() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [selectedRole, setSelectedRole] = useState<string>('all');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
 
   useEffect(() => {
     const loadEmployees = async () => {
@@ -113,8 +114,14 @@ export default function AllEmployees() {
     return employeeAnalytics.find(analytics => analytics.userId === employeeId);
   };
 
-  const handleCreateEmployee = () => {
-    setIsCreateDialogOpen(true);
+  const handleAddEmployee = (employeeData: Omit<User, 'id' | 'createdAt'>) => {
+    const newEmployee: User = {
+      ...employeeData,
+      id: `emp-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    
+    setEmployees([...employees, newEmployee]);
   };
 
   const handleEditEmployee = (employee: User) => {
@@ -146,29 +153,13 @@ export default function AllEmployees() {
           </p>
         </div>
         {canCreateAccounts && (
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-primary hover:opacity-90">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Add Employee
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Employee</DialogTitle>
-                <DialogDescription>
-                  Create a new employee account and assign them to a role and department.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="text-center py-8 text-muted-foreground">
-                  <UserPlus className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Employee creation form would go here</p>
-                  <p className="text-sm">This is a mock interface for demonstration</p>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            className="bg-gradient-company hover:bg-company/90"
+            onClick={() => setIsAddEmployeeOpen(true)}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Employee
+          </Button>
         )}
       </div>
 
@@ -356,7 +347,7 @@ export default function AllEmployees() {
               }
             </p>
             {canCreateAccounts && !searchTerm && selectedDepartment === 'all' && selectedRole === 'all' && (
-              <Button onClick={handleCreateEmployee} className="bg-gradient-primary hover:opacity-90">
+              <Button onClick={() => setIsAddEmployeeOpen(true)} className="bg-gradient-primary hover:opacity-90">
                 <Plus className="w-4 h-4 mr-2" />
                 Add First Employee
               </Button>
@@ -364,6 +355,15 @@ export default function AllEmployees() {
           </CardContent>
         </Card>
       )}
+
+      {/* Add Employee Dialog */}
+      <AddEmployeeDialog
+        isOpen={isAddEmployeeOpen}
+        onClose={() => setIsAddEmployeeOpen(false)}
+        onAddEmployee={handleAddEmployee}
+        roles={roles}
+        departments={departments}
+      />
     </div>
   );
 }

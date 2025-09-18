@@ -20,6 +20,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
 const DEFAULT_PERMISSIONS: Permission[] = [
   'can_approve_requests',
@@ -181,11 +182,16 @@ export function RoleManagement({ users = [] }: RoleManagementProps) {
     });
   };
 
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    role: Role | null;
+    isOpen: boolean;
+  }>({ role: null, isOpen: false });
+
   const handleDeleteRole = (role: Role) => {
     if (role.isSystemDefined) {
       toast({
         title: "Cannot Delete",
-        description: "System-defined roles cannot be deleted",
+        description: "System-defined roles cannot be deleted. You can clone them instead.",
         variant: "destructive"
       });
       return;
@@ -201,10 +207,18 @@ export function RoleManagement({ users = [] }: RoleManagementProps) {
       return;
     }
 
-    setRoles(roles.filter(r => r.id !== role.id));
+    setDeleteConfirmation({ role, isOpen: true });
+  };
+
+  const confirmDeleteRole = () => {
+    if (!deleteConfirmation.role) return;
+
+    setRoles(roles.filter(r => r.id !== deleteConfirmation.role!.id));
+    setDeleteConfirmation({ role: null, isOpen: false });
+    
     toast({
       title: "Role Deleted",
-      description: `${role.displayName} role has been deleted`,
+      description: `${deleteConfirmation.role.displayName} role has been deleted`,
     });
   };
 

@@ -51,10 +51,9 @@ const navigationItems = {
   manager: [
     { title: 'Dashboard', url: '/', icon: BarChart3 },
     { title: 'Analytics', url: '/analytics', icon: BarChart3 },
+    { title: 'Department Schedule', url: '/department-schedule', icon: Calendar },
     { title: 'Departments', url: '/departments', icon: Building2 },
-    { title: 'All Employees', url: '/employees', icon: Users },
     { title: 'Requests', url: '/requests', icon: Bell },
-    { title: 'Settings', url: '/settings', icon: Settings },
   ],
   employee: [
     { title: 'Dashboard', url: '/', icon: BarChart3 },
