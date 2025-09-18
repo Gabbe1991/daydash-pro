@@ -11,6 +11,7 @@ import Analytics from "./pages/Analytics";
 import AllEmployees from "./pages/AllEmployees";
 import CompanySettings from "./pages/CompanySettings";
 import Departments from "./pages/Departments";
+import RoleManagement from "./pages/RoleManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -96,7 +97,7 @@ const App = () => (
             } />
             <Route path="/roles" element={
               <ProtectedRoute>
-                <Dashboard />
+                <RoleManagement />
               </ProtectedRoute>
             } />
             <Route path="/departments" element={
