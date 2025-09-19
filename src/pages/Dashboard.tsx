@@ -235,102 +235,106 @@ export default function Dashboard() {
 
     return (
       <div className="space-y-6">
-        {/* Stats Overview */}
+        {/* Job Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
-            title="Hours This Month"
+            title="Total Hours Worked"
             value={userAnalytics?.totalHours || 0}
             icon={Clock}
             trend={{ value: 3, isPositive: true }}
+            description="This month"
           />
           <StatsCard
             title="Completed Shifts"
             value={userAnalytics?.completedShifts || 0}
             icon={CheckCircle}
             variant="success"
+            description="This month"
           />
           <StatsCard
-            title="Upcoming Shifts"
-            value={userSchedules.filter(s => s.status === 'active').length}
-            icon={Calendar}
-            description="This week"
-          />
-          <StatsCard
-            title="Time Off Requests"
-            value={userRequests.length}
+            title="Punctuality Score"
+            value={`${userAnalytics?.punctualityScore || 0}%`}
             icon={UserCheck}
-            variant={userRequests.some(r => r.status === 'pending') ? 'warning' : 'default'}
-            description={`${userRequests.filter(r => r.status === 'pending').length} pending`}
+            variant="success"
+            trend={{ value: 2, isPositive: true }}
+          />
+          <StatsCard
+            title="Average Hours/Week"
+            value={userAnalytics?.averageHoursPerWeek || 0}
+            icon={TrendingUp}
+            description="Last 4 weeks"
           />
         </div>
 
-        {/* My Schedule */}
-        <ScheduleCalendar
-          schedules={userSchedules}
-          onScheduleClick={(schedule) => console.log('My schedule clicked:', schedule)}
-        />
-
-        {/* Recent Activity */}
+        {/* Employer Information & Contract */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Recent Shifts
+                <Building2 className="w-5 h-5" />
+                Employer Details
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {userSchedules.slice(0, 3).map((schedule) => (
-                <div key={schedule.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                  <div>
-                    <p className="font-medium">{schedule.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(schedule.startTime), 'MMM d, h:mm a')}
-                    </p>
-                  </div>
-                  <Badge variant={schedule.status === 'active' ? 'default' : 'secondary'}>
-                    {schedule.status}
-                  </Badge>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Company</p>
+                  <p className="font-medium">TechCorp Solutions</p>
                 </div>
-              ))}
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Department</p>
+                  <p className="font-medium">Engineering</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Manager</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium">Sarah Johnson</p>
+                    <Badge variant="outline" className="text-xs">Manager</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">📞 (555) 123-4567</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Start Date</p>
+                  <p className="font-medium">{format(new Date(user.hireDate || '2024-01-01'), 'MMM d, yyyy')}</p>
+                </div>
+              </div>
+              <Button variant="outline" className="w-full">
+                Export Contract (PDF)
+              </Button>
             </CardContent>
           </Card>
 
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Bell className="w-5 h-5" />
-                Time Off Requests
+                <Calendar className="w-5 h-5" />
+                Today's Team
               </CardTitle>
+              <CardDescription>Who you're working with today</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {userRequests.length === 0 ? (
-                <div className="text-center py-6 text-muted-foreground">
-                  <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>No time off requests</p>
-                  <Button variant="outline" size="sm" className="mt-2">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Request Time Off
-                  </Button>
-                </div>
-              ) : (
-                userRequests.map((request) => (
-                  <div key={request.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                    <div>
-                      <p className="font-medium">{request.reason}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(request.startDate), 'MMM d')} - {format(new Date(request.endDate), 'MMM d')}
-                      </p>
-                    </div>
-                    <Badge variant={
-                      request.status === 'approved' ? 'default' : 
-                      request.status === 'pending' ? 'secondary' : 'destructive'
-                    }>
-                      {request.status}
-                    </Badge>
+              {employees.slice(0, 3).map((emp) => (
+                <div key={emp.id} className="flex items-center gap-3 p-3 border border-border rounded-lg">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={emp.avatar} />
+                    <AvatarFallback className="bg-employee text-employee-foreground">
+                      {emp.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{emp.name}</p>
+                    <p className="text-xs text-muted-foreground">{emp.jobTitle || 'Team Member'}</p>
                   </div>
-                ))
-              )}
+                  <Badge variant="outline" className="text-xs">
+                    9 AM - 5 PM
+                  </Badge>
+                </div>
+              ))}
+              <div className="text-center pt-2">
+                <Button variant="ghost" size="sm" className="text-xs">
+                  View Full Schedule
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -14,6 +14,8 @@ import Departments from "./pages/Departments";
 import RoleManagement from "./pages/RoleManagement";
 import DepartmentSchedule from "./pages/DepartmentSchedule";
 import Requests from "./pages/Requests";
+import MySchedule from "./pages/MySchedule";
+import ShiftSwaps from "./pages/ShiftSwaps";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,7 +56,7 @@ const App = () => (
             {/* Role-specific routes can be added here */}
             <Route path="/schedule" element={
               <ProtectedRoute>
-                <Dashboard />
+                <MySchedule />
               </ProtectedRoute>
             } />
             <Route path="/team" element={
@@ -84,7 +86,7 @@ const App = () => (
             } />
             <Route path="/swaps" element={
               <ProtectedRoute>
-                <Dashboard />
+                <ShiftSwaps />
               </ProtectedRoute>
             } />
             <Route path="/company" element={

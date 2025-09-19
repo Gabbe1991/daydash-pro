@@ -58,9 +58,7 @@ const navigationItems = {
   employee: [
     { title: 'Dashboard', url: '/', icon: BarChart3 },
     { title: 'My Schedule', url: '/schedule', icon: Calendar },
-    { title: 'Time Off', url: '/time-off', icon: Clock },
     { title: 'Shift Swaps', url: '/swaps', icon: UserCheck },
-    { title: 'Settings', url: '/settings', icon: Settings },
   ],
 };
 
