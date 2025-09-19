@@ -23,6 +23,7 @@ import {
 import { Schedule, TimeOffRequest, Analytics, EmployeeAnalytics, User } from '@/types';
 import { mockAPI, mockEmployees } from '@/lib/mockData';
 import { format } from 'date-fns';
+import { UpcomingShifts } from '@/components/schedule/UpcomingShifts';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -298,7 +299,20 @@ export default function Dashboard() {
                   <p className="font-medium">{format(new Date(user.hireDate || '2024-01-01'), 'MMM d, yyyy')}</p>
                 </div>
               </div>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  // Mock contract PDF export
+                  const blob = new Blob(['Mock Contract PDF content'], { type: 'application/pdf' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${user?.name}_employment_contract.pdf`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
                 Export Contract (PDF)
               </Button>
             </CardContent>
@@ -337,6 +351,15 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Mini Upcoming Shifts Preview */}
+          <UpcomingShifts 
+            schedules={userSchedules}
+            employees={employees.filter(emp => emp.departmentId === user.departmentId && emp.id !== user.id)}
+            manager={employees.find(emp => emp.id === user.managerId) || null}
+            userDepartmentId={user.departmentId}
+            compact={true}
+          />
         </div>
       </div>
     );
@@ -351,10 +374,12 @@ export default function Dashboard() {
             Here's what's happening with your {getLegacyRole() === 'company' ? 'company' : getLegacyRole() === 'manager' ? 'team' : 'schedule'} today.
           </p>
         </div>
-        <Button className="bg-gradient-primary hover:opacity-90">
-          <Plus className="w-4 h-4 mr-2" />
-          {getLegacyRole() === 'employee' ? 'Request Time Off' : 'Create Schedule'}
-        </Button>
+        {getLegacyRole() !== 'employee' && (
+          <Button className="bg-gradient-primary hover:opacity-90">
+            <Plus className="w-4 h-4 mr-2" />
+            Create Schedule
+          </Button>
+        )}
       </div>
 
       {getLegacyRole() === 'company' && renderCompanyDashboard()}

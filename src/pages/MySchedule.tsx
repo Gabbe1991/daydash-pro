@@ -13,6 +13,7 @@ import {
   Phone,
   MapPin
 } from 'lucide-react';
+import { UpcomingShifts } from '@/components/schedule/UpcomingShifts';
 import { Schedule, User } from '@/types';
 import { mockAPI } from '@/lib/mockData';
 import { format } from 'date-fns';
@@ -220,6 +221,14 @@ export default function MySchedule() {
             </CardContent>
           </Card>
 
+          {/* Upcoming Shifts Widget */}
+          <UpcomingShifts 
+            schedules={schedules}
+            employees={coworkers}
+            manager={manager}
+            userDepartmentId={user.departmentId}
+          />
+
           {/* Quick Stats */}
           <Card className="shadow-card">
             <CardHeader>
@@ -233,10 +242,6 @@ export default function MySchedule() {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Completed Shifts</span>
                 <span className="font-medium">3/4</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Next Shift</span>
-                <span className="font-medium">Tomorrow 9 AM</span>
               </div>
             </CardContent>
           </Card>
