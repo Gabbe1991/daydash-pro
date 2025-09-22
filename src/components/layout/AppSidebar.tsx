@@ -58,7 +58,7 @@ const navigationItems = {
   employee: [
     { title: 'Dashboard', url: '/', icon: BarChart3 },
     { title: 'My Schedule', url: '/schedule', icon: Calendar },
-    { title: 'Shift Swaps', url: '/swaps', icon: UserCheck },
+    { title: 'Requests', url: '/requests', icon: UserCheck },
   ],
 };
 
@@ -137,20 +137,31 @@ export function AppSidebar() {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Switch Role (Demo)</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => switchRole('company')}>
-                <Building2 className="w-4 h-4 mr-2" />
-                Company Admin
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => switchRole('manager')}>
-                <Shield className="w-4 h-4 mr-2" />
-                Manager
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => switchRole('employee')}>
-                <Users className="w-4 h-4 mr-2" />
-                Employee
-              </DropdownMenuItem>
+            <DropdownMenuContent align="start" className="w-56 bg-card">
+              <DropdownMenuLabel className="px-2 py-1.5 text-sm font-semibold">
+                {user.name}
+              </DropdownMenuLabel>
+              <div className="px-2 py-1 text-xs text-muted-foreground">
+                {user.email}
+              </div>
+              {legacyRole === 'company' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Switch Role (Admin)</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => switchRole('company')}>
+                    <Building2 className="w-4 h-4 mr-2" />
+                    Company Admin
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => switchRole('manager')}>
+                    <Shield className="w-4 h-4 mr-2" />
+                    Manager
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => switchRole('employee')}>
+                    <Users className="w-4 h-4 mr-2" />
+                    Employee
+                  </DropdownMenuItem>
+                </>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />

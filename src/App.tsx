@@ -15,7 +15,6 @@ import RoleManagement from "./pages/RoleManagement";
 import DepartmentSchedule from "./pages/DepartmentSchedule";
 import Requests from "./pages/Requests";
 import MySchedule from "./pages/MySchedule";
-import ShiftSwaps from "./pages/ShiftSwaps";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -84,9 +83,10 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/swaps" element={
+            <Route path="/swaps" element={<Navigate to="/requests" replace />} />
+            <Route path="/requests" element={
               <ProtectedRoute>
-                <ShiftSwaps />
+                <Requests />
               </ProtectedRoute>
             } />
             <Route path="/company" element={
@@ -107,11 +107,6 @@ const App = () => (
             <Route path="/department-schedule" element={
               <ProtectedRoute>
                 <DepartmentSchedule />
-              </ProtectedRoute>
-            } />
-            <Route path="/requests" element={
-              <ProtectedRoute>
-                <Requests />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
