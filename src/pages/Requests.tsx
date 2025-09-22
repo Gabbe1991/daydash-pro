@@ -10,12 +10,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Calendar as CalendarIcon } from '@/components/ui/calendar';
+import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { 
   UserCheck, 
   Clock, 
-  Calendar, 
+  Calendar as CalendarIcon, 
   Plus, 
   ArrowRight,
   CheckCircle,
@@ -379,12 +379,13 @@ export default function Requests() {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarIcon
+                        <Calendar
                           mode="single"
                           selected={leaveStartDate}
                           onSelect={setLeaveStartDate}
                           disabled={(date) => date < new Date()}
                           initialFocus
+                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
@@ -406,12 +407,13 @@ export default function Requests() {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarIcon
+                        <Calendar
                           mode="single"
                           selected={leaveEndDate}
                           onSelect={setLeaveEndDate}
                           disabled={(date) => date < (leaveStartDate || new Date())}
                           initialFocus
+                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
