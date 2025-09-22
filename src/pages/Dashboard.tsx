@@ -374,7 +374,7 @@ export default function Dashboard() {
             Here's what's happening with your {getLegacyRole() === 'company' ? 'company' : getLegacyRole() === 'manager' ? 'team' : 'schedule'} today.
           </p>
         </div>
-        {getLegacyRole() !== 'employee' && (
+        {getLegacyRole() === 'company' && (
           <Button className="bg-gradient-primary hover:opacity-90">
             <Plus className="w-4 h-4 mr-2" />
             Create Schedule

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRole } from '@/hooks/useRole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -55,6 +56,7 @@ interface LeaveRequest {
 
 export default function Requests() {
   const { user } = useAuth();
+  const { getLegacyRole } = useRole();
   const { toast } = useToast();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [coworkers, setCoworkers] = useState<User[]>([]);
@@ -248,216 +250,221 @@ export default function Requests() {
           </div>
         </div>
         
-        <div className="flex gap-2">
-          <Dialog open={isSwapDialogOpen} onOpenChange={setIsSwapDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="hover:bg-employee/10">
-                <UserCheck className="w-4 h-4 mr-2" />
-                Request Shift Swap
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Request Shift Swap</DialogTitle>
-                <DialogDescription>
-                  Choose which of your shifts you'd like to swap with a colleague's shift.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="my-shift">My Shift</Label>
-                  <Select value={selectedMyShift} onValueChange={setSelectedMyShift}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your shift to swap" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {myActiveShifts.map((shift) => (
-                        <SelectItem key={shift.id} value={shift.id}>
-                          {shift.title} - {format(new Date(shift.startTime), 'MMM d, h:mm a')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="target-shift">Colleague's Shift</Label>
-                  <Select value={selectedTargetShift} onValueChange={setSelectedTargetShift}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select shift to swap with" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableShifts.map((shift) => {
-                        const colleague = coworkers.find(c => c.id === shift.userId);
-                        return (
+        {getLegacyRole() === 'employee' && (
+          <div className="flex gap-2">
+            <Dialog open={isSwapDialogOpen} onOpenChange={setIsSwapDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="hover:bg-employee/10">
+                  <UserCheck className="w-4 h-4 mr-2" />
+                  Request Shift Swap
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Request Shift Swap</DialogTitle>
+                  <DialogDescription>
+                    Choose which of your shifts you'd like to swap with a colleague's shift.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="my-shift">My Shift</Label>
+                    <Select value={selectedMyShift} onValueChange={setSelectedMyShift}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your shift to swap" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {myActiveShifts.map((shift) => (
                           <SelectItem key={shift.id} value={shift.id}>
-                            {colleague?.name} - {shift.title} - {format(new Date(shift.startTime), 'MMM d, h:mm a')}
+                            {shift.title} - {format(new Date(shift.startTime), 'MMM d, h:mm a')}
                           </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="reason">Reason for Swap</Label>
-                  <Textarea
-                    id="reason"
-                    placeholder="Please explain why you need to swap this shift..."
-                    value={swapReason}
-                    onChange={(e) => setSwapReason(e.target.value)}
-                    rows={3}
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsSwapDialogOpen(false)}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleRequestSwap}
-                    className="flex-1 bg-gradient-employee hover:opacity-90"
-                  >
-                    Submit Request
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={isLeaveDialogOpen} onOpenChange={setIsLeaveDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-employee hover:opacity-90">
-                <CalendarDays className="w-4 h-4 mr-2" />
-                Request Leave
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Request Leave</DialogTitle>
-                <DialogDescription>
-                  Submit a leave request for approval by your manager.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="leave-type">Leave Type</Label>
-                  <Select value={leaveType} onValueChange={setLeaveType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select leave type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LEAVE_TYPES.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Start Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "justify-start text-left font-normal",
-                            !leaveStartDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {leaveStartDate ? format(leaveStartDate, "MMM d, yyyy") : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={leaveStartDate}
-                          onSelect={setLeaveStartDate}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>End Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "justify-start text-left font-normal",
-                            !leaveEndDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {leaveEndDate ? format(leaveEndDate, "MMM d, yyyy") : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={leaveEndDate}
-                          onSelect={setLeaveEndDate}
-                          disabled={(date) => date < (leaveStartDate || new Date())}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Label htmlFor="target-shift">Colleague's Shift</Label>
+                    <Select value={selectedTargetShift} onValueChange={setSelectedTargetShift}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select shift to swap with" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableShifts.map((shift) => {
+                          const colleague = coworkers.find(c => c.id === shift.userId);
+                          return (
+                            <SelectItem key={shift.id} value={shift.id}>
+                              {colleague?.name} - {shift.title} - {format(new Date(shift.startTime), 'MMM d, h:mm a')}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="reason">Reason for Swap</Label>
+                    <Textarea
+                      id="reason"
+                      placeholder="Please explain why you need to swap this shift..."
+                      value={swapReason}
+                      onChange={(e) => setSwapReason(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsSwapDialogOpen(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleRequestSwap}
+                      className="flex-1 bg-gradient-employee hover:opacity-90"
+                    >
+                      Submit Request
+                    </Button>
                   </div>
                 </div>
+              </DialogContent>
+            </Dialog>
 
-                <div className="space-y-2">
-                  <Label htmlFor="leave-reason">Reason (Optional)</Label>
-                  <Textarea
-                    id="leave-reason"
-                    placeholder="Additional details about your leave request..."
-                    value={leaveReason}
-                    onChange={(e) => setLeaveReason(e.target.value)}
-                    rows={3}
-                  />
-                </div>
+            <Dialog open={isLeaveDialogOpen} onOpenChange={setIsLeaveDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-employee hover:opacity-90">
+                  <CalendarDays className="w-4 h-4 mr-2" />
+                  Request Leave
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Request Leave</DialogTitle>
+                  <DialogDescription>
+                    Submit a leave request for approval by your manager.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="leave-type">Leave Type</Label>
+                    <Select value={leaveType} onValueChange={setLeaveType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select leave type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LEAVE_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsLeaveDialogOpen(false)}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleRequestLeave}
-                    className="flex-1 bg-gradient-employee hover:opacity-90"
-                  >
-                    Submit Request
-                  </Button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Start Date</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "justify-start text-left font-normal",
+                              !leaveStartDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {leaveStartDate ? format(leaveStartDate, "MMM d, yyyy") : "Pick a date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={leaveStartDate}
+                            onSelect={setLeaveStartDate}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>End Date</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "justify-start text-left font-normal",
+                              !leaveEndDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {leaveEndDate ? format(leaveEndDate, "MMM d, yyyy") : "Pick a date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={leaveEndDate}
+                            onSelect={setLeaveEndDate}
+                            disabled={(date) => date < (leaveStartDate || new Date())}
+                            initialFocus
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="leave-reason">Reason (Optional)</Label>
+                    <Textarea
+                      id="leave-reason"
+                      placeholder="Additional details about your leave request..."
+                      value={leaveReason}
+                      onChange={(e) => setLeaveReason(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsLeaveDialogOpen(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleRequestLeave}
+                      className="flex-1 bg-gradient-employee hover:opacity-90"
+                    >
+                      Submit Request
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </div>
 
       {/* Request History */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">All Requests</TabsTrigger>
-          <TabsTrigger value="swaps">Shift Swaps</TabsTrigger>
-          <TabsTrigger value="leave">Leave Requests</TabsTrigger>
+      <Tabs defaultValue={getLegacyRole() === 'employee' ? 'all' : 'swaps'} className="space-y-4">
+        <TabsList className={cn(
+          "grid w-full",
+          getLegacyRole() === 'employee' ? "grid-cols-3" : "grid-cols-1"
+        )}>
+          {getLegacyRole() === 'employee' && <TabsTrigger value="all">All Requests</TabsTrigger>}
+          <TabsTrigger value="swaps">{getLegacyRole() === 'employee' ? 'Shift Swaps' : 'Shift Swap Approvals'}</TabsTrigger>
+          {getLegacyRole() === 'employee' && <TabsTrigger value="leave">Leave Requests</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
