@@ -29,7 +29,7 @@ const Appearance = () => {
 
   return (
     <MainLayout>
-      <div className="container max-w-4xl mx-auto py-8 px-6 space-y-8">
+      <div className="container max-w-4xl mx-auto py-6 px-6 space-y-6">
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Appearance</h1>
@@ -85,8 +85,8 @@ const Appearance = () => {
                     key={option.id}
                     onClick={() => setMode(option.id as any)}
                     className={cn(
-                      "flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200",
-                      "hover:bg-muted/50 hover:scale-105",
+                      "flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-colors duration-200",
+                      "hover:bg-muted/50",
                       isSelected 
                         ? "border-primary bg-primary/10 shadow-lg" 
                         : "border-border hover:border-primary/50"
@@ -116,8 +116,6 @@ const Appearance = () => {
           </CardContent>
         </Card>
 
-        <Separator />
-
         {/* Color Themes */}
         <Card>
           <CardHeader>
@@ -146,8 +144,8 @@ const Appearance = () => {
                     }}
                     onClick={() => setPreviewTheme(theme)}
                     className={cn(
-                      "relative flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200",
-                      "hover:scale-105 hover:shadow-lg",
+                      "relative flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-colors duration-200",
+                      "hover:shadow-md",
                       isSelected 
                         ? "border-primary bg-primary/10 shadow-lg" 
                         : "border-border hover:border-primary/50"
