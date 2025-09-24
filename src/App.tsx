@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { AdminRoute, ManagerRoute, AdminManagerRoute, RoleBasedRoute } from "@/components/auth/RoleBasedRoute";
 import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
 import AllEmployees from "./pages/AllEmployees";
@@ -19,24 +20,6 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
-  
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-  
-  if (!user) {
-    return <LoginForm />;
-  }
-  
-  return <MainLayout>{children}</MainLayout>;
-}
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -46,70 +29,68 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginForm />} />
+            
+            {/* Routes accessible by all authenticated users */}
             <Route path="/" element={
-              <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={['role-admin', 'role-manager', 'role-employee']}>
                 <Dashboard />
-              </ProtectedRoute>
+              </RoleBasedRoute>
             } />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
-            {/* Role-specific routes can be added here */}
             <Route path="/schedule" element={
-              <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={['role-admin', 'role-manager', 'role-employee']}>
                 <MySchedule />
-              </ProtectedRoute>
+              </RoleBasedRoute>
             } />
-            <Route path="/team" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
+            <Route path="/requests" element={
+              <RoleBasedRoute allowedRoles={['role-admin', 'role-manager', 'role-employee']}>
+                <Requests />
+              </RoleBasedRoute>
             } />
+            
+            {/* Admin-only routes */}
             <Route path="/employees" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AllEmployees />
-              </ProtectedRoute>
-            } />
-            <Route path="/analytics" element={
-              <ProtectedRoute>
-                <Analytics />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/settings" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <CompanySettings />
-              </ProtectedRoute>
-            } />
-            <Route path="/time-off" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/swaps" element={<Navigate to="/requests" replace />} />
-            <Route path="/requests" element={
-              <ProtectedRoute>
-                <Requests />
-              </ProtectedRoute>
-            } />
-            <Route path="/company" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/roles" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <RoleManagement />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/departments" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Departments />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
+            
+            {/* Manager-only routes */}
             <Route path="/department-schedule" element={
-              <ProtectedRoute>
+              <ManagerRoute>
                 <DepartmentSchedule />
-              </ProtectedRoute>
+              </ManagerRoute>
             } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* Admin and Manager routes */}
+            <Route path="/analytics" element={
+              <AdminManagerRoute>
+                <Analytics />
+              </AdminManagerRoute>
+            } />
+            
+            {/* Redirects for legacy routes */}
+            <Route path="/team" element={<Navigate to="/" replace />} />
+            <Route path="/time-off" element={<Navigate to="/" replace />} />
+            <Route path="/company" element={<Navigate to="/" replace />} />
+            <Route path="/swaps" element={<Navigate to="/requests" replace />} />
+            
+            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
