@@ -2,7 +2,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Monitor, Moon, Sun, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Appearance = () => {
@@ -14,6 +15,23 @@ const Appearance = () => {
     { id: 'system', label: 'System', icon: Monitor },
   ];
 
+  // Color options for customization
+  const colorOptions = [
+    { name: 'Blue', primary: '217 91% 60%', accent: '217 91% 60%', secondary: '217 32% 17%' },
+    { name: 'Purple', primary: '262 83% 58%', accent: '262 83% 58%', secondary: '262 32% 17%' },
+    { name: 'Green', primary: '142 76% 36%', accent: '142 76% 36%', secondary: '142 32% 17%' },
+    { name: 'Orange', primary: '25 95% 53%', accent: '25 95% 53%', secondary: '25 32% 17%' },
+    { name: 'Red', primary: '0 84% 60%', accent: '0 84% 60%', secondary: '0 32% 17%' },
+    { name: 'Pink', primary: '322 71% 67%', accent: '322 71% 67%', secondary: '322 32% 17%' },
+  ];
+
+  const applyCustomColor = (colors: { primary: string; accent: string; secondary: string }) => {
+    const root = document.documentElement;
+    root.style.setProperty('--primary', colors.primary);
+    root.style.setProperty('--accent', colors.accent);
+    root.style.setProperty('--secondary', colors.secondary);
+  };
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -22,7 +40,7 @@ const Appearance = () => {
         <div className="flex-1 flex flex-col">
           {/* Main Content */}
           <main className="flex-1 p-8">
-            <div className="max-w-2xl mx-auto space-y-8">
+            <div className="max-w-2xl mx-auto space-y-6">
               {/* Header */}
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold text-foreground">Appearance</h1>
@@ -80,6 +98,64 @@ const Appearance = () => {
                         </button>
                       );
                     })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Custom Colors */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Palette className="w-5 h-5" />
+                    Custom Colors
+                  </CardTitle>
+                  <CardDescription>
+                    Choose colors for buttons and theme elements.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    {colorOptions.map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => applyCustomColor({
+                          primary: color.primary,
+                          accent: color.accent,
+                          secondary: color.secondary
+                        })}
+                        className="flex items-center gap-3 p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors duration-200 hover:bg-muted/30"
+                      >
+                        {/* Color Preview */}
+                        <div className="flex gap-1">
+                          <div 
+                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: `hsl(${color.primary})` }}
+                          />
+                          <div 
+                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: `hsl(${color.accent})` }}
+                          />
+                          <div 
+                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: `hsl(${color.secondary})` }}
+                          />
+                        </div>
+                        
+                        {/* Color Name */}
+                        <span className="font-medium text-foreground">{color.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Preview Buttons */}
+                  <div className="space-y-3 pt-4 border-t border-border">
+                    <h4 className="font-medium text-foreground">Preview</h4>
+                    <div className="flex flex-wrap gap-3">
+                      <Button>Primary Button</Button>
+                      <Button variant="secondary">Secondary</Button>
+                      <Button variant="outline">Outline</Button>
+                      <Button variant="ghost">Ghost</Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
