@@ -29,7 +29,7 @@ const Appearance = () => {
 
   return (
     <MainLayout>
-      <div className="container max-w-4xl mx-auto py-6 px-6 space-y-6 relative">
+      <div className="container max-w-4xl mx-auto py-6 px-6 space-y-6">
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Appearance</h1>
@@ -40,7 +40,7 @@ const Appearance = () => {
 
         {/* Preview Bar */}
         {hasPreview && (
-          <Card className="border-primary/50 bg-primary/5 relative z-10">
+          <Card className="border-primary/50 bg-primary/5">
             <CardContent className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <Eye className="w-5 h-5 text-primary" />
@@ -117,7 +117,7 @@ const Appearance = () => {
         </Card>
 
         {/* Color Themes */}
-        <Card className="relative z-0">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Palette className="w-5 h-5" />
@@ -144,12 +144,11 @@ const Appearance = () => {
                     }}
                     onClick={() => setPreviewTheme(theme)}
                     className={cn(
-                      "relative flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200",
+                      "relative flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-colors duration-200",
                       "hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/20",
-                      "transform-gpu will-change-transform",
                       isSelected 
                         ? "border-primary bg-primary/10 shadow-sm" 
-                        : "border-border hover:border-primary/50"
+                        : "border-muted hover:border-primary/50"
                     )}
                   >
                     {/* Color Preview */}
