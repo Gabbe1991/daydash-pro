@@ -3,11 +3,11 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Monitor, Moon, Sun, Palette } from 'lucide-react';
+import { Monitor, Moon, Sun, Palette, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Appearance = () => {
-  const { mode, setMode } = useTheme();
+  const { mode, setMode, colorTheme, setColorTheme, colorThemes } = useTheme();
 
   const themeOptions = [
     { id: 'light', label: 'Light', icon: Sun },
@@ -15,22 +15,8 @@ const Appearance = () => {
     { id: 'system', label: 'System', icon: Monitor },
   ];
 
-  // Color options for customization
-  const colorOptions = [
-    { name: 'Blue', primary: '217 91% 60%', accent: '217 91% 60%', secondary: '217 32% 17%' },
-    { name: 'Purple', primary: '262 83% 58%', accent: '262 83% 58%', secondary: '262 32% 17%' },
-    { name: 'Green', primary: '142 76% 36%', accent: '142 76% 36%', secondary: '142 32% 17%' },
-    { name: 'Orange', primary: '25 95% 53%', accent: '25 95% 53%', secondary: '25 32% 17%' },
-    { name: 'Red', primary: '0 84% 60%', accent: '0 84% 60%', secondary: '0 32% 17%' },
-    { name: 'Pink', primary: '322 71% 67%', accent: '322 71% 67%', secondary: '322 32% 17%' },
-  ];
-
-  const applyCustomColor = (colors: { primary: string; accent: string; secondary: string }) => {
-    const root = document.documentElement;
-    root.style.setProperty('--primary', colors.primary);
-    root.style.setProperty('--accent', colors.accent);
-    root.style.setProperty('--secondary', colors.secondary);
-  };
+  // Use existing color themes from context
+  const availableColorThemes = colorThemes.slice(1); // Skip default, show specific colors
 
   return (
     <SidebarProvider>
@@ -115,36 +101,47 @@ const Appearance = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
-                    {colorOptions.map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => applyCustomColor({
-                          primary: color.primary,
-                          accent: color.accent,
-                          secondary: color.secondary
-                        })}
-                        className="flex items-center gap-3 p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors duration-200 hover:bg-muted/30"
-                      >
-                        {/* Color Preview */}
-                        <div className="flex gap-1">
-                          <div 
-                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                            style={{ backgroundColor: `hsl(${color.primary})` }}
-                          />
-                          <div 
-                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                            style={{ backgroundColor: `hsl(${color.accent})` }}
-                          />
-                          <div 
-                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                            style={{ backgroundColor: `hsl(${color.secondary})` }}
-                          />
-                        </div>
-                        
-                        {/* Color Name */}
-                        <span className="font-medium text-foreground">{color.name}</span>
-                      </button>
-                    ))}
+                    {availableColorThemes.map((theme) => {
+                      const isSelected = colorTheme.id === theme.id;
+                      
+                      return (
+                        <button
+                          key={theme.id}
+                          onClick={() => setColorTheme(theme)}
+                          className={cn(
+                            "flex items-center gap-3 p-4 rounded-lg border-2 transition-colors duration-200",
+                            "hover:bg-muted/30 relative",
+                            isSelected 
+                              ? "border-primary bg-primary/10 shadow-lg" 
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          {/* Color Preview */}
+                          <div className="flex gap-1">
+                            <div 
+                              className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                              style={{ backgroundColor: `hsl(${theme.colors.primary})` }}
+                            />
+                            <div 
+                              className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                              style={{ backgroundColor: `hsl(${theme.colors.accent})` }}
+                            />
+                            <div 
+                              className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                              style={{ backgroundColor: `hsl(${theme.colors.secondary})` }}
+                            />
+                          </div>
+                          
+                          {/* Color Name */}
+                          <span className="font-medium text-foreground flex-1 text-left">{theme.name}</span>
+                          
+                          {/* Selected Indicator */}
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-primary" />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                   
                   {/* Preview Buttons */}
