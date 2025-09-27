@@ -49,7 +49,6 @@ const navigationItems = {
     { title: 'Departments', url: '/departments', icon: Building2 },
     { title: 'All Employees', url: '/employees', icon: Users },
     { title: 'Company Settings', url: '/settings', icon: Settings },
-    { title: 'Appearance', url: '/appearance', icon: Palette },
   ],
   manager: [
     { title: 'Dashboard', url: '/', icon: BarChart3 },
@@ -57,13 +56,11 @@ const navigationItems = {
     { title: 'Department Schedule', url: '/department-schedule', icon: Calendar },
     { title: 'Departments', url: '/departments', icon: Building2 },
     { title: 'Requests', url: '/requests', icon: Bell },
-    { title: 'Appearance', url: '/appearance', icon: Palette },
   ],
   employee: [
     { title: 'Dashboard', url: '/', icon: BarChart3 },
     { title: 'My Schedule', url: '/schedule', icon: Calendar },
     { title: 'Requests', url: '/requests', icon: UserCheck },
-    { title: 'Appearance', url: '/appearance', icon: Palette },
   ],
 };
 
