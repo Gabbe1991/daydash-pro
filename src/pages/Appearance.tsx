@@ -144,14 +144,11 @@ const Appearance = () => {
                     })}
                   </div>
                   
-                  {/* Preview Buttons */}
+                  {/* Preview Button */}
                   <div className="space-y-3 pt-4 border-t border-border">
                     <h4 className="font-medium text-foreground">Preview</h4>
                     <div className="flex flex-wrap gap-3">
                       <Button>Primary Button</Button>
-                      <Button variant="secondary">Secondary</Button>
-                      <Button variant="outline">Outline</Button>
-                      <Button variant="ghost">Ghost</Button>
                     </div>
                   </div>
                 </CardContent>

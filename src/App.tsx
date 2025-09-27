@@ -18,6 +18,7 @@ import DepartmentSchedule from "./pages/DepartmentSchedule";
 import Requests from "./pages/Requests";
 import MySchedule from "./pages/MySchedule";
 import Appearance from "./pages/Appearance";
+import GeneralSettings from "./pages/GeneralSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -91,6 +92,13 @@ const App = () => (
             <Route path="/appearance" element={
               <RoleBasedRoute allowedRoles={['role-admin', 'role-manager', 'role-employee']}>
                 <Appearance />
+              </RoleBasedRoute>
+            } />
+            
+            {/* General Settings - available to all roles */}
+            <Route path="/general-settings" element={
+              <RoleBasedRoute allowedRoles={['role-admin', 'role-manager', 'role-employee']}>
+                <GeneralSettings />
               </RoleBasedRoute>
             } />
             

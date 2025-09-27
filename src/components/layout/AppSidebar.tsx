@@ -31,6 +31,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -197,8 +198,24 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Sidebar Toggle */}
-        <div className="p-4 border-t border-border">
+        {/* Settings & Sidebar Toggle */}
+        <div className="p-4 border-t border-border space-y-3">
+          <div className="flex items-center gap-2">
+            <NavLink
+              to="/general-settings"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-2 p-2 rounded-md transition-colors flex-1",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "hover:bg-muted/50 text-muted-foreground"
+                )
+              }
+            >
+              <Settings className="w-4 h-4" />
+              {!isCollapsed && <span className="text-sm">Settings</span>}
+            </NavLink>
+          </div>
           <SidebarTrigger className="w-full" />
         </div>
       </SidebarContent>
