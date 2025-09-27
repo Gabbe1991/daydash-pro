@@ -189,6 +189,18 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       const cssVar = key.replace(/([A-Z])/g, '-$1').toLowerCase();
       root.style.setProperty(`--${cssVar}`, value);
     });
+
+    // Apply the selected theme color to all role-specific colors for consistency
+    root.style.setProperty('--company-accent', currentTheme.colors.primary);
+    root.style.setProperty('--manager-accent', currentTheme.colors.primary);
+    root.style.setProperty('--employee-accent', currentTheme.colors.primary);
+    
+    // Update gradients to use the new color
+    const primaryColor = currentTheme.colors.primary;
+    const primaryGlow = currentTheme.colors.primaryForeground;
+    root.style.setProperty('--gradient-company', `linear-gradient(135deg, hsl(${primaryColor}), hsl(${primaryColor} / 0.8))`);
+    root.style.setProperty('--gradient-manager', `linear-gradient(135deg, hsl(${primaryColor}), hsl(${primaryColor} / 0.8))`);
+    root.style.setProperty('--gradient-employee', `linear-gradient(135deg, hsl(${primaryColor}), hsl(${primaryColor} / 0.8))`);
     
     // Apply theme mode
     const isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
