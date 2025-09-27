@@ -20,13 +20,23 @@ import {
   Plug,
   Shield,
   Mail,
-  Smartphone
+  Smartphone,
+  HelpCircle,
+  Puzzle,
+  DollarSign,
+  BarChart3,
+  Users
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useRole } from '@/hooks/useRole';
 import { cn } from '@/lib/utils';
 
 const GeneralSettings = () => {
   const { mode, setMode, colorTheme, setColorTheme, colorThemes } = useTheme();
+  const { getLegacyRole } = useRole();
+  
+  const legacyRole = getLegacyRole();
+  const canViewBilling = legacyRole === 'company' || legacyRole === 'manager';
 
   const themeOptions = [
     { id: 'light', label: 'Light', icon: Sun },
@@ -53,15 +63,17 @@ const GeneralSettings = () => {
               </div>
 
               <Tabs defaultValue="appearance" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-5">
+                <TabsList className="grid w-full grid-cols-7">
                   <TabsTrigger value="appearance" className="flex items-center gap-2">
                     <Palette className="w-4 h-4" />
                     Appearance
                   </TabsTrigger>
-                  <TabsTrigger value="billing" className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4" />
-                    Billing
-                  </TabsTrigger>
+                  {canViewBilling && (
+                    <TabsTrigger value="billing" className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" />
+                      Billing
+                    </TabsTrigger>
+                  )}
                   <TabsTrigger value="account" className="flex items-center gap-2">
                     <User className="w-4 h-4" />
                     Account
@@ -73,6 +85,14 @@ const GeneralSettings = () => {
                   <TabsTrigger value="integrations" className="flex items-center gap-2">
                     <Plug className="w-4 h-4" />
                     Integrations
+                  </TabsTrigger>
+                  <TabsTrigger value="support" className="flex items-center gap-2">
+                    <HelpCircle className="w-4 h-4" />
+                    Support
+                  </TabsTrigger>
+                  <TabsTrigger value="extensions" className="flex items-center gap-2">
+                    <Puzzle className="w-4 h-4" />
+                    Extensions
                   </TabsTrigger>
                 </TabsList>
 
@@ -199,7 +219,8 @@ const GeneralSettings = () => {
                 </TabsContent>
 
                 {/* Billing Tab */}
-                <TabsContent value="billing" className="space-y-6">
+                {canViewBilling && (
+                  <TabsContent value="billing" className="space-y-6">
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -229,20 +250,21 @@ const GeneralSettings = () => {
                                 <p className="text-xs text-muted-foreground">Expires 12/25</p>
                               </div>
                             </div>
-                            <Button variant="outline" size="sm">Update</Button>
+                            <Button size="sm">Update</Button>
                           </div>
                         </div>
 
                         <div className="space-y-2">
                           <Label className="text-base font-medium">Billing History</Label>
-                          <Button variant="outline" className="w-full justify-start">
+                          <Button className="w-full justify-start">
                             View Billing History
                           </Button>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                </TabsContent>
+                  </TabsContent>
+                )}
 
                 {/* Account Tab */}
                 <TabsContent value="account" className="space-y-6">
@@ -275,19 +297,19 @@ const GeneralSettings = () => {
                       
                       <Separator />
                       
-                      <div className="space-y-4">
-                        <Label className="text-base font-medium">Security</Label>
-                        <div className="space-y-3">
-                          <Button variant="outline" className="w-full justify-start">
-                            <Shield className="w-4 h-4 mr-2" />
-                            Change Password
-                          </Button>
-                          <Button variant="outline" className="w-full justify-start">
-                            <Smartphone className="w-4 h-4 mr-2" />
-                            Two-Factor Authentication
-                          </Button>
+                        <div className="space-y-4">
+                          <Label className="text-base font-medium">Security</Label>
+                          <div className="space-y-3">
+                            <Button className="w-full justify-start">
+                              <Shield className="w-4 h-4 mr-2" />
+                              Change Password
+                            </Button>
+                            <Button className="w-full justify-start">
+                              <Smartphone className="w-4 h-4 mr-2" />
+                              Two-Factor Authentication
+                            </Button>
+                          </div>
                         </div>
-                      </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -372,7 +394,7 @@ const GeneralSettings = () => {
                               <p className="text-sm text-muted-foreground">Sync schedules with Google Calendar</p>
                             </div>
                           </div>
-                          <Button variant="outline">Connect</Button>
+                          <Button>Connect</Button>
                         </div>
                         
                         <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -383,7 +405,7 @@ const GeneralSettings = () => {
                               <p className="text-sm text-muted-foreground">Sync schedules with Microsoft Outlook</p>
                             </div>
                           </div>
-                          <Button variant="outline">Connect</Button>
+                          <Button>Connect</Button>
                         </div>
                         
                         <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -394,7 +416,120 @@ const GeneralSettings = () => {
                               <p className="text-sm text-muted-foreground">Send notifications to Slack channels</p>
                             </div>
                           </div>
-                          <Button variant="outline">Connect</Button>
+                          <Button>Connect</Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Users className="w-8 h-8 text-purple-600" />
+                            <div>
+                              <p className="font-medium">Microsoft Teams</p>
+                              <p className="text-sm text-muted-foreground">Share schedules and collaborate in Teams</p>
+                            </div>
+                          </div>
+                          <Button>Connect</Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Support Tab */}
+                <TabsContent value="support" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <HelpCircle className="w-5 h-5" />
+                        Support & Help
+                      </CardTitle>
+                      <CardDescription>
+                        Get help and support for WorkScheduler.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Mail className="w-8 h-8 text-blue-600" />
+                            <div>
+                              <p className="font-medium">Contact Support</p>
+                              <p className="text-sm text-muted-foreground">support@workscheduler.com</p>
+                            </div>
+                          </div>
+                          <Button>Email Support</Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <HelpCircle className="w-8 h-8 text-green-600" />
+                            <div>
+                              <p className="font-medium">Documentation</p>
+                              <p className="text-sm text-muted-foreground">Learn how to use WorkScheduler effectively</p>
+                            </div>
+                          </div>
+                          <Button>View Docs</Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Users className="w-8 h-8 text-purple-600" />
+                            <div>
+                              <p className="font-medium">Community Forum</p>
+                              <p className="text-sm text-muted-foreground">Connect with other WorkScheduler users</p>
+                            </div>
+                          </div>
+                          <Button>Join Community</Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Extensions Tab */}
+                <TabsContent value="extensions" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Puzzle className="w-5 h-5" />
+                        Extensions & Add-ons
+                      </CardTitle>
+                      <CardDescription>
+                        Extend WorkScheduler functionality with premium features and integrations.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <DollarSign className="w-8 h-8 text-green-600" />
+                            <div>
+                              <p className="font-medium">Payroll Extension</p>
+                              <p className="text-sm text-muted-foreground">Connect scheduling to payroll systems for seamless time tracking</p>
+                            </div>
+                          </div>
+                          <Button>Install</Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <BarChart3 className="w-8 h-8 text-blue-600" />
+                            <div>
+                              <p className="font-medium">Reporting Extension</p>
+                              <p className="text-sm text-muted-foreground">Advanced analytics, custom KPIs, and PDF export capabilities</p>
+                            </div>
+                          </div>
+                          <Button>Install</Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Users className="w-8 h-8 text-purple-600" />
+                            <div>
+                              <p className="font-medium">HR Tools Extension</p>
+                              <p className="text-sm text-muted-foreground">Employee histories, vacation requests, and performance records</p>
+                            </div>
+                          </div>
+                          <Button>Install</Button>
                         </div>
                       </div>
                     </CardContent>

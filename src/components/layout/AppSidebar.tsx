@@ -195,7 +195,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Settings & Sidebar Toggle */}
+        {/* Settings & Logout */}
         <div className="p-4 border-t border-border space-y-3">
           <div className="flex items-center gap-2">
             <NavLink
@@ -213,6 +213,16 @@ export function AppSidebar() {
               {!isCollapsed && <span className="text-sm">Settings</span>}
             </NavLink>
           </div>
+          
+          <Button
+            onClick={logout}
+            variant="ghost"
+            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="w-4 h-4" />
+            {!isCollapsed && <span className="text-sm ml-2">Logout</span>}
+          </Button>
+          
           <SidebarTrigger className="w-full" />
         </div>
       </SidebarContent>
